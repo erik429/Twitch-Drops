@@ -49,4 +49,4 @@
 
 ## 🤝 Contact
 
-Add me on Steam: **[Steam](https://steamcommunity.com/id/34211155035578432/)**
+Add me on **[Steam](https://steamcommunity.com/id/34211155035578432/)**
