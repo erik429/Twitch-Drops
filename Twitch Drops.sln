@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34322.80
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Twitch Drops", "Twitch Drops.csproj", "{F7CFC33B-C412-4D02-ABE1-A2186B3EB938}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F7CFC33B-C412-4D02-ABE1-A2186B3EB938}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7CFC33B-C412-4D02-ABE1-A2186B3EB938}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7CFC33B-C412-4D02-ABE1-A2186B3EB938}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7CFC33B-C412-4D02-ABE1-A2186B3EB938}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {584630FB-397D-4C80-B332-9C11C200CCFA}
+	EndGlobalSection
+EndGlobal
