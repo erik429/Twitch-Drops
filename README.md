@@ -30,12 +30,13 @@
 
 ## 💾 How to Use
 
-1. Ensure you have **Google Chrome** installed on your system.
-2. Download the 7TV plugin for Google Chrome.
-3. **Download** the program from [Releases]([[https://github.com/your-repo/twitch-drops/releases](https://github.com/erik429/Twitch-Drops/releases/tag/Bot](https://github.com/erik429/Twitch-Drops/releases/tag/bot))).
-4. Launch the program and follow these steps:
+1. have **Google Chrome**
+2. Make sure you have this setting in google chrome **[Settings](https://cdn.discordapp.com/attachments/797746748558147605/1316184115988398101/image.png?ex=675a1f7a&is=6758cdfa&hm=5c8052937ad6c753a8788d34013e81b725ce0f3c30a2aecb58b34dc8f25bfc07&)**
+3. Download the 7TV plugin for Google Chrome. (it disabled the mature audience prompt)
+4. **Download** the program from [Releases]([[https://github.com/your-repo/twitch-drops/releases](https://github.com/erik429/Twitch-Drops/releases/tag/Bot](https://github.com/erik429/Twitch-Drops/releases/tag/bot))).
+5. Run .exe :)
    - Click **Set Coordinates** and click the RED PART of "LIVE" Button of the Twitch Stream. I Recommend having fullscreen.
-   - Close the twitch stream, Open a random page like googe.se keep the browser in fullscreen.
+   - Close the all twitch other streams, Open a random tab like googe.se keep the browser in fullscreen.
    - Click **Start Watching**!
 
 ---
