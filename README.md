@@ -1,7 +1,7 @@
 # Twitch Drops Automation
 
 **Twitch Drops Automation** watch all rust twitch rivals streams for skins.
-https://cdn.discordapp.com/attachments/797746748558147605/1316122198766911538/Capture.PNG?ex=6759e5d0&is=67589450&hm=b1ecd811b85e8e1b7b43bf74ac7c4f22d0548daea2bb43307b1eecaee4840827&
+![Twitch Drops Automation](https://cdn.discordapp.com/attachments/797746748558147605/1316122198766911538/Capture.PNG?ex=6759e5d0&is=67589450&hm=b1ecd811b85e8e1b7b43bf74ac7c4f22d0548daea2bb43307b1eecaee4840827&)
 ---
 
 ## 🛠️ Features
@@ -34,9 +34,9 @@ https://cdn.discordapp.com/attachments/797746748558147605/1316122198766911538/Ca
 2. Download the 7TV plugin for Google Chrome.
 3. **Download** the program from [Releases](https://github.com/your-repo/twitch-drops/releases).
 4. Launch the program and follow these steps:
-   - Click **Set Coordinates** and select the "Live" indicator position on the Twitch stream.
-   - Add the streams you wish to watch (or use the pre-configured list).
-   - Click **Start Watching** and relax!
+   - Click **Set Coordinates** and select the "Live" indicator position on the a LIVE Twitch stream.
+   - Close the stream
+   - Click **Start Watching**!
 
 ---
 
