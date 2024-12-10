@@ -32,7 +32,7 @@
 
 1. Ensure you have **Google Chrome** installed on your system.
 2. Download the 7TV plugin for Google Chrome.
-3. **Download** the program from [Releases](https://github.com/your-repo/twitch-drops/releases).
+3. **Download** the program from [Releases]([https://github.com/your-repo/twitch-drops/releases](https://github.com/erik429/Twitch-Drops/releases/tag/Bot)).
 4. Launch the program and follow these steps:
    - Click **Set Coordinates** and select the "Live" indicator position on the a LIVE Twitch stream.
    - Close the stream
