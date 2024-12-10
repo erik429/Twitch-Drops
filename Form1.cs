@@ -42,7 +42,7 @@ namespace Twitch_Drops
 
             var setCoordinatesButton = new Button
             {
-                Text = "Set Coordinates",
+                Text = "Set Coordinates (click to set)",
                 Width = 150,
                 Height = 40,
                 Top = 70,
@@ -55,7 +55,7 @@ namespace Twitch_Drops
             foreach (var stream in streams)
             {
                 skinsListBox.Items.Add(stream.Description);
-                skinStatuses[stream.Description] = "Not Watched"; 
+                skinStatuses[stream.Description] = "Not Watched";
             }
         }
 
@@ -66,9 +66,17 @@ namespace Twitch_Drops
 
             foreach (var stream in streams)
             {
-                TimeSpan watchTime = stream.Description == "Special Event Item"
-                    ? TimeSpan.FromMinutes(241) 
-                    : TimeSpan.FromMinutes(121);
+                TimeSpan watchTime;
+                if (checkBox1.Checked == true)
+                {
+                    watchTime = TimeSpan.FromSeconds(15);
+                }
+                else
+                {
+                    watchTime = stream.Description == "Special Event Item"
+                        ? TimeSpan.FromMinutes(241)
+                        : TimeSpan.FromMinutes(121);
+                }
 
                 bool watched = await TryWatchStream(stream, watchTime);
                 if (!watched)
@@ -80,6 +88,7 @@ namespace Twitch_Drops
             LogMessage("Finished watching all streams.");
             startButton.Enabled = true;
         }
+
         private void skinsListBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index < 0) return;
@@ -107,7 +116,7 @@ namespace Twitch_Drops
 
             OpenInChrome(streamInfo.Url);
 
-            await Task.Delay(5000);
+            await Task.Delay(11000);
 
             if (IsStreamLive())
             {
@@ -126,7 +135,7 @@ namespace Twitch_Drops
                 CloseBrowser();
                 OpenInChrome(alternateUrl);
 
-                await Task.Delay(5000);
+                await Task.Delay(11000);
 
                 if (IsStreamLive())
                 {
@@ -146,32 +155,37 @@ namespace Twitch_Drops
             CloseBrowser();
             return false;
         }
-
         private bool IsStreamLive()
         {
             int x = Properties.Settings.Default.LiveIndicatorX;
             int y = Properties.Settings.Default.LiveIndicatorY;
 
-            Color currentColor = GetColorAt(x, y);
             int savedR = Properties.Settings.Default.LiveIndicatorR;
             int savedG = Properties.Settings.Default.LiveIndicatorG;
             int savedB = Properties.Settings.Default.LiveIndicatorB;
+
             LogMessage($"Checking stream live status at X={x}, Y={y}");
-            LogMessage($"Current Color: R={currentColor.R}, G={currentColor.G}, B={currentColor.B}");
-            LogMessage($"Saved Color:   R={savedR}, G={savedG}, B={savedB}");
-            bool isLive = currentColor.R == savedR && currentColor.G == savedG && currentColor.B == savedB;
-
-            if (isLive)
+            LogMessage($"Saved Color: R={savedR}, G={savedG}, B={savedB}");
+            for (int dx = -2; dx <= 2; dx++)
             {
-                LogMessage("Stream is live!");
-            }
-            else
-            {
-                LogMessage("Stream is offline.");
+                for (int dy = -2; dy <= 2; dy++)
+                {
+                    Color currentColor = GetColorAt(x + dx, y + dy);
+
+                    //LogMessage($"Current Color at ({x + dx}, {y + dy}): R={currentColor.R}, G={currentColor.G}, B={currentColor.B}");
+
+                    if (currentColor.R == savedR && currentColor.G == savedG && currentColor.B == savedB)
+                    {
+                        LogMessage("Stream is live!");
+                        return true;
+                    }
+                }
             }
 
-            return isLive;
+            LogMessage("Stream is offline.");
+            return false;
         }
+
         private Color GetColorAt(int x, int y)
         {
             Bitmap screenPixel = new Bitmap(1, 1);
@@ -212,10 +226,10 @@ namespace Twitch_Drops
 
         private async void SetCoordinates(object sender, EventArgs e)
         {
-            LogMessage("HOVER OVER THE STREAM LIVE BUTTON...");
+            LogMessage("CLICK THE LIVE STREAM BUTTON (CLICK THE RED PART OF THE LIVE BUTTON)!!!...");
 
             this.Hide();
-            await Task.Delay(2000);
+            await Task.Delay(100);
 
             var coordinates = CaptureMouseClick();
 
@@ -231,6 +245,7 @@ namespace Twitch_Drops
                 Properties.Settings.Default.Save();
                 LogMessage($"Coordinates set: X={coordinates.Value.X}, Y={coordinates.Value.Y}");
                 LogMessage($"Color at coordinates: R={pixelColor.R}, G={pixelColor.G}, B={pixelColor.B}");
+                this.Show();
             }
 
             this.Show();
@@ -278,6 +293,32 @@ namespace Twitch_Drops
                 Url = url;
                 Description = description;
                 BackupUrls = backupUrls;
+            }
+        }
+        private bool IsColorMatch(Color color1, Color color2, int tolerance = 10)
+        {
+            return Math.Abs(color1.R - color2.R) <= tolerance &&
+                   Math.Abs(color1.G - color2.G) <= tolerance &&
+                   Math.Abs(color1.B - color2.B) <= tolerance;
+        }
+        private void skinsListBox_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            int index = skinsListBox.IndexFromPoint(e.Location);
+            if (index != ListBox.NoMatches)
+            {
+                string selectedItem = skinsListBox.Items[index].ToString();
+                var confirmResult = MessageBox.Show(
+                    $"Are you sure you want to remove '{selectedItem}' from the list?",
+                    "Confirm Removal",
+                    MessageBoxButtons.YesNo);
+
+                if (confirmResult == DialogResult.Yes)
+                {
+                    streams.RemoveAll(stream => stream.Description == selectedItem);
+                    skinStatuses.Remove(selectedItem);
+                    skinsListBox.Items.RemoveAt(index);
+                    LogMessage($"Removed '{selectedItem}' from the list.");
+                }
             }
         }
     }

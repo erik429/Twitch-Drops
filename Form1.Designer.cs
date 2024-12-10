@@ -35,6 +35,9 @@
             skinsListBox = new ListBox();
             pictureBox2 = new PictureBox();
             label2 = new Label();
+            label3 = new Label();
+            checkBox1 = new CheckBox();
+            label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
@@ -44,7 +47,7 @@
             logga.FormattingEnabled = true;
             logga.HorizontalScrollbar = true;
             logga.ItemHeight = 15;
-            logga.Location = new Point(12, 116);
+            logga.Location = new Point(12, 141);
             logga.Name = "logga";
             logga.ScrollAlwaysVisible = true;
             logga.Size = new Size(633, 349);
@@ -74,10 +77,11 @@
             // 
             skinsListBox.DrawMode = DrawMode.OwnerDrawFixed;
             skinsListBox.FormattingEnabled = true;
-            skinsListBox.Location = new Point(662, 116);
+            skinsListBox.Location = new Point(651, 141);
             skinsListBox.Name = "skinsListBox";
             skinsListBox.Size = new Size(328, 340);
             skinsListBox.TabIndex = 4;
+            skinsListBox.MouseDoubleClick += skinsListBox_MouseDoubleClick;
             // 
             // pictureBox2
             // 
@@ -94,17 +98,50 @@
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.ForeColor = Color.FromArgb(192, 0, 192);
-            label2.Location = new Point(0, 0);
+            label2.Location = new Point(196, 60);
             label2.Name = "label2";
             label2.Size = new Size(337, 25);
             label2.TabIndex = 6;
             label2.Text = "USE CHROME BROWSER & 7TV Plugin";
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(680, 98);
+            label3.Name = "label3";
+            label3.Size = new Size(205, 15);
+            label3.TabIndex = 7;
+            label3.Text = "Double click to remove skins streams!\r\n";
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(54, 0);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(538, 19);
+            checkBox1.TabIndex = 8;
+            checkBox1.Text = "Check me before press start if you want to test all the streams, make sure the program is working ";
+            checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label4.ForeColor = Color.FromArgb(192, 0, 0);
+            label4.Location = new Point(-4, 113);
+            label4.Name = "label4";
+            label4.Size = new Size(1042, 25);
+            label4.TabIndex = 9;
+            label4.Text = "Before starting have a chrome browser open in fullscreen on the prefered monitor (dont have another stream open)";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1028, 477);
+            ClientSize = new Size(1028, 505);
+            Controls.Add(label4);
+            Controls.Add(checkBox1);
+            Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(pictureBox2);
             Controls.Add(skinsListBox);
@@ -128,5 +165,8 @@
         private ListBox skinsListBox;
         private PictureBox pictureBox2;
         private Label label2;
+        private Label label3;
+        private CheckBox checkBox1;
+        private Label label4;
     }
 }
