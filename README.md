@@ -1,7 +1,7 @@
-# Twitch Drops Automation <img src="[https://static-cdn.jtvnw.net/jtv_user_pictures/8001bf68-a1d5-40e2-96f0-409f8a34e8df-profile_image-300x300.png](https://cdn.discordapp.com/attachments/797746748558147605/1316122198766911538/Capture.PNG?ex=6759e5d0&is=67589450&hm=b1ecd811b85e8e1b7b43bf74ac7c4f22d0548daea2bb43307b1eecaee4840827&)" width="50">
+# Twitch Drops Automation
 
 **Twitch Drops Automation** watch all rust twitch rivals streams for skins.
-
+https://cdn.discordapp.com/attachments/797746748558147605/1316122198766911538/Capture.PNG?ex=6759e5d0&is=67589450&hm=b1ecd811b85e8e1b7b43bf74ac7c4f22d0548daea2bb43307b1eecaee4840827&
 ---
 
 ## 🛠️ Features
