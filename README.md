@@ -29,7 +29,7 @@
 ---
 
 ## 💾 How to Use
-
+https://youtu.be/OdS6p4HkaF8
 1. have **Google Chrome**
 2. Make sure you have this setting in google chrome **[Settings](https://cdn.discordapp.com/attachments/797746748558147605/1316184115988398101/image.png?ex=675a1f7a&is=6758cdfa&hm=5c8052937ad6c753a8788d34013e81b725ce0f3c30a2aecb58b34dc8f25bfc07&)**
 3. Download the 7TV plugin for Google Chrome. (it disabled the mature audience prompt)
