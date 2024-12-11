@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Twitch_Drops
@@ -29,27 +30,8 @@ namespace Twitch_Drops
 
         private async void Form1_Load(object sender, EventArgs e)
         {
-            var startButton = new Button
-            {
-                Text = "Start Watching",
-                Width = 150,
-                Height = 40,
-                Top = 20,
-                Left = 20
-            };
-            startButton.Click += StartWatching;
-            Controls.Add(startButton);
-
-            var setCoordinatesButton = new Button
-            {
-                Text = "Set Coordinates (click to set)",
-                Width = 150,
-                Height = 40,
-                Top = 70,
-                Left = 20
-            };
-            setCoordinatesButton.Click += SetCoordinates;
-            Controls.Add(setCoordinatesButton);
+            button1.Click += StartWatching;
+            button2.Click += SetCoordinates;
             skinsListBox.DrawMode = DrawMode.OwnerDrawFixed;
             skinsListBox.DrawItem += skinsListBox_DrawItem;
             foreach (var stream in streams)
@@ -61,32 +43,22 @@ namespace Twitch_Drops
 
         private async void StartWatching(object sender, EventArgs e)
         {
-            Button startButton = sender as Button;
-            startButton.Enabled = false;
 
-            foreach (var stream in streams)
+            for (int i = 0; i < streams.Count; i++)
             {
                 TimeSpan watchTime;
-                if (checkBox1.Checked == true)
-                {
-                    watchTime = TimeSpan.FromSeconds(15);
-                }
-                else
-                {
-                    watchTime = stream.Description == "Special Event Item"
-                        ? TimeSpan.FromMinutes(241)
-                        : TimeSpan.FromMinutes(121);
-                }
+                watchTime = streams[i].Description == "Special Event Item"
+                    ? TimeSpan.FromMinutes(241)
+                    : TimeSpan.FromMinutes(121);
 
-                bool watched = await TryWatchStream(stream, watchTime);
+                bool watched = await TryWatchStream(streams[i], watchTime, streams, i);
                 if (!watched)
                 {
-                    LogMessage($"Stream offline or unavailable: {stream.Description}");
+                    LogMessage($"Stream offline or unavailable: {streams[i].Description}");
                 }
             }
 
             LogMessage("Finished watching all streams.");
-            startButton.Enabled = true;
         }
 
         private void skinsListBox_DrawItem(object sender, DrawItemEventArgs e)
@@ -110,51 +82,115 @@ namespace Twitch_Drops
             }
             e.DrawFocusRectangle();
         }
-        private async Task<bool> TryWatchStream(StreamInfo streamInfo, TimeSpan watchTime)
+        private readonly HashSet<string> completedStreams = new HashSet<string>();
+        private async Task<bool> TryWatchStream(StreamInfo streamInfo, TimeSpan watchTime, List<StreamInfo> allStreams, int currentIndex)
         {
+            if (completedStreams.Contains(streamInfo.Description))
+            {
+                LogMessage($"Skipping already completed stream: {streamInfo.Description}");
+                return false;
+            }
+
             LogMessage($"Trying to watch stream: {streamInfo.Description}");
+            HashSet<string> triedUrls = new HashSet<string>();
 
             OpenInChrome(streamInfo.Url);
+            triedUrls.Add(streamInfo.Url);
 
             await Task.Delay(11000);
 
-            if (IsStreamLive())
+            bool isLive = IsStreamLive();
+
+            if (!isLive)
             {
-                LogMessage($"Stream is live: {streamInfo.Description}. Watching now for {watchTime.TotalMinutes} minutes.");
-                skinStatuses[streamInfo.Description] = "Watched";
-                skinsListBox.Refresh();
-                await Task.Delay(watchTime);
-                CloseBrowser();
-                LogMessage($"Finished watching {streamInfo.Description}.");
-                return true;
-            }
-
-            foreach (var alternateUrl in streamInfo.BackupUrls)
-            {
-                LogMessage($"STREAM OFFLINE... trying alternate URL for {streamInfo.Description}: {alternateUrl}");
-                CloseBrowser();
-                OpenInChrome(alternateUrl);
-
-                await Task.Delay(11000);
-
-                if (IsStreamLive())
+                LogMessage($"Stream is offline: {streamInfo.Description}. Trying alternate streams.");
+                foreach (var alternateUrl in streamInfo.BackupUrls)
                 {
-                    LogMessage($"Alternate stream is live: {streamInfo.Description}. Watching now for {watchTime.TotalMinutes} minutes.");
-                    skinStatuses[streamInfo.Description] = "Watched";
-                    skinsListBox.Refresh();
-                    await Task.Delay(watchTime);
+                    if (triedUrls.Contains(alternateUrl))
+                        continue;
+
+                    LogMessage($"Trying alternate Stream for {streamInfo.Description}: {alternateUrl}");
                     CloseBrowser();
-                    LogMessage($"Finished watching {streamInfo.Description}.");
-                    return true;
+                    OpenInChrome(alternateUrl);
+                    triedUrls.Add(alternateUrl);
+
+                    await Task.Delay(11000);
+
+                    if (IsStreamLive())
+                    {
+                        LogMessage($"Alternate stream is live: {streamInfo.Description}. Watching now.");
+                        isLive = true;
+                        break;
+                    }
                 }
             }
 
-            LogMessage($"Stream offline: {streamInfo.Description}");
-            skinStatuses[streamInfo.Description] = "Offline";
+            if (!isLive)
+            {
+                LogMessage($"All streams offline for {streamInfo.Description}.");
+                skinStatuses[streamInfo.Description] = "Offline";
+                skinsListBox.Refresh();
+                CloseBrowser();
+                completedStreams.Add(streamInfo.Description);
+                return false;
+            }
+
+            LogMessage($"Stream is live: {streamInfo.Description}. Waiting {watchTime.TotalMinutes} minutes.");
+            TimeSpan timeWatched = TimeSpan.Zero;
+            const int checkIntervalMinutes = 5;
+
+            while (timeWatched < watchTime)
+            {
+                await Task.Delay(TimeSpan.FromMinutes(checkIntervalMinutes));
+                timeWatched += TimeSpan.FromMinutes(checkIntervalMinutes);
+
+                if (!IsStreamLive())
+                {
+                    LogMessage($"Stream went offline: {streamInfo.Description}.");
+                    isLive = false;
+                    CloseBrowser();
+
+                    foreach (var alternateUrl in streamInfo.BackupUrls)
+                    {
+                        if (triedUrls.Contains(alternateUrl))
+                            continue;
+
+                        LogMessage($"Trying alternate URL for {streamInfo.Description}: {alternateUrl}");
+                        OpenInChrome(alternateUrl);
+                        triedUrls.Add(alternateUrl);
+
+                        await Task.Delay(11000);
+
+                        if (IsStreamLive())
+                        {
+                            LogMessage($"Alternate stream is live: {streamInfo.Description}. Resuming watch.");
+                            isLive = true;
+                            break;
+                        }
+                    }
+
+                    if (!isLive)
+                    {
+                        LogMessage($"All streams offline for {streamInfo.Description} during watch. Marking as completed.");
+                        CloseBrowser();
+                        skinStatuses[streamInfo.Description] = "Offline";
+                        skinsListBox.Refresh();
+                        completedStreams.Add(streamInfo.Description);
+                        return false;
+                    }
+                }
+
+                LogMessage($"Stream is still live: {streamInfo.Description}. Time watched: {timeWatched.TotalMinutes} minutes.");
+            }
+
+            skinStatuses[streamInfo.Description] = "Watched";
             skinsListBox.Refresh();
+            completedStreams.Add(streamInfo.Description);
             CloseBrowser();
-            return false;
+            LogMessage($"Finished watching {streamInfo.Description}.");
+            return true;
         }
+
         private bool IsStreamLive()
         {
             int x = Properties.Settings.Default.LiveIndicatorX;
@@ -163,25 +199,17 @@ namespace Twitch_Drops
             int savedR = Properties.Settings.Default.LiveIndicatorR;
             int savedG = Properties.Settings.Default.LiveIndicatorG;
             int savedB = Properties.Settings.Default.LiveIndicatorB;
-
-            LogMessage($"Checking stream live status at X={x}, Y={y}");
-            LogMessage($"Saved Color: R={savedR}, G={savedG}, B={savedB}");
             for (int dx = -2; dx <= 2; dx++)
             {
                 for (int dy = -2; dy <= 2; dy++)
                 {
                     Color currentColor = GetColorAt(x + dx, y + dy);
-
-                    //LogMessage($"Current Color at ({x + dx}, {y + dy}): R={currentColor.R}, G={currentColor.G}, B={currentColor.B}");
-
                     if (currentColor.R == savedR && currentColor.G == savedG && currentColor.B == savedB)
                     {
-                        LogMessage("Stream is live!");
                         return true;
                     }
                 }
             }
-
             LogMessage("Stream is offline.");
             return false;
         }
@@ -218,9 +246,25 @@ namespace Twitch_Drops
 
         private void CloseBrowser()
         {
-            foreach (var process in Process.GetProcessesByName("chrome"))
+            try
             {
-                process.Kill();
+                var chromeProcesses = Process.GetProcessesByName("chrome");
+                if (chromeProcesses.Length > 0)
+                {
+                    IntPtr hWnd = chromeProcesses[0].MainWindowHandle;
+                    if (hWnd != IntPtr.Zero)
+                    {
+                        SetForegroundWindow(hWnd);
+                        LogMessage("Focused Google Chrome window.");
+                    }
+                }
+                SendKeys.SendWait("^w");
+                LogMessage("Sent CTRL + W to close the browser tab.");
+            }
+            catch (Exception ex)
+            {
+                SendKeys.SendWait("^w");
+                LogMessage($"Failed to close the browser: {ex.Message}");
             }
         }
 
@@ -245,7 +289,6 @@ namespace Twitch_Drops
                 Properties.Settings.Default.Save();
                 LogMessage($"Coordinates set: X={coordinates.Value.X}, Y={coordinates.Value.Y}");
                 LogMessage($"Color at coordinates: R={pixelColor.R}, G={pixelColor.G}, B={pixelColor.B}");
-                this.Show();
             }
 
             this.Show();
@@ -320,6 +363,19 @@ namespace Twitch_Drops
                     LogMessage($"Removed '{selectedItem}' from the list.");
                 }
             }
+        }
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            button1.Text = "Running";
+            button1.Enabled = false;
+            button2.Enabled = false;
         }
     }
 }
