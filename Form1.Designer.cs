@@ -42,6 +42,8 @@
             label7 = new Label();
             button1 = new Button();
             button2 = new Button();
+            button3 = new Button();
+            button4 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
@@ -61,9 +63,9 @@
             // 
             pictureBox1.BackgroundImage = (Image)resources.GetObject("pictureBox1.BackgroundImage");
             pictureBox1.BackgroundImageLayout = ImageLayout.Stretch;
-            pictureBox1.Location = new Point(274, 98);
+            pictureBox1.Location = new Point(274, 134);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(92, 75);
+            pictureBox1.Size = new Size(92, 56);
             pictureBox1.TabIndex = 2;
             pictureBox1.TabStop = false;
             // 
@@ -72,7 +74,7 @@
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.ForeColor = Color.IndianRed;
-            label1.Location = new Point(372, 123);
+            label1.Location = new Point(372, 99);
             label1.Name = "label1";
             label1.Size = new Size(486, 25);
             label1.TabIndex = 3;
@@ -84,7 +86,7 @@
             skinsListBox.FormattingEnabled = true;
             skinsListBox.Location = new Point(662, 210);
             skinsListBox.Name = "skinsListBox";
-            skinsListBox.Size = new Size(328, 420);
+            skinsListBox.Size = new Size(391, 420);
             skinsListBox.TabIndex = 4;
             skinsListBox.MouseDoubleClick += skinsListBox_MouseDoubleClick;
             // 
@@ -94,7 +96,7 @@
             pictureBox2.BackgroundImageLayout = ImageLayout.Stretch;
             pictureBox2.Location = new Point(2, 6);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(1001, 79);
+            pictureBox2.Size = new Size(1077, 59);
             pictureBox2.TabIndex = 5;
             pictureBox2.TabStop = false;
             // 
@@ -103,7 +105,7 @@
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.ForeColor = Color.FromArgb(192, 0, 192);
-            label2.Location = new Point(372, 88);
+            label2.Location = new Point(372, 74);
             label2.Name = "label2";
             label2.Size = new Size(332, 25);
             label2.TabIndex = 6;
@@ -112,7 +114,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(785, 192);
+            label3.Location = new Point(712, 192);
             label3.Name = "label3";
             label3.Size = new Size(205, 15);
             label3.TabIndex = 7;
@@ -155,7 +157,7 @@
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label7.ForeColor = Color.MediumTurquoise;
-            label7.Location = new Point(372, 148);
+            label7.Location = new Point(372, 124);
             label7.Name = "label7";
             label7.Size = new Size(303, 25);
             label7.TabIndex = 12;
@@ -164,11 +166,11 @@
             // button1
             // 
             button1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button1.Location = new Point(12, 91);
+            button1.Location = new Point(12, 75);
             button1.Name = "button1";
             button1.Size = new Size(256, 37);
             button1.TabIndex = 13;
-            button1.Text = "START";
+            button1.Text = "3. START";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
@@ -179,15 +181,38 @@
             button2.Name = "button2";
             button2.Size = new Size(256, 55);
             button2.TabIndex = 14;
-            button2.Text = "SET CORDS TO LIVE BUTTON (click to set)\r\n";
+            button2.Text = "2. SET CORDS TO LIVE BUTTON (click to set)\r\n";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
+            // 
+            // button3
+            // 
+            button3.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button3.Location = new Point(850, 75);
+            button3.Name = "button3";
+            button3.Size = new Size(219, 29);
+            button3.TabIndex = 15;
+            button3.Text = "1. FETCH TWITCH DROPS";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
+            // button4
+            // 
+            button4.Location = new Point(994, 110);
+            button4.Name = "button4";
+            button4.Size = new Size(75, 23);
+            button4.TabIndex = 16;
+            button4.Text = "Help";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1002, 664);
+            ClientSize = new Size(1081, 664);
+            Controls.Add(button4);
+            Controls.Add(button3);
             Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(label7);
@@ -225,5 +250,7 @@
         private Label label7;
         private Button button1;
         private Button button2;
+        private Button button3;
+        private Button button4;
     }
 }

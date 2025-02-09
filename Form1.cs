@@ -1,27 +1,20 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using HtmlAgilityPack;
 
 namespace Twitch_Drops
 {
     public partial class Form1 : Form
     {
         private readonly Dictionary<string, string> skinStatuses = new();
-        private readonly List<StreamInfo> streams = new List<StreamInfo>
-        {
-            new StreamInfo("https://www.twitch.tv/riqqeloff", "MP5A4", new List<string> { "https://www.twitch.tv/Oilrats" }),
-            new StreamInfo("https://www.twitch.tv/xXxTheFocuSxXx", "Sheet Metal Double Door", new List<string> { "https://www.twitch.tv/s3kox" }),
-            new StreamInfo("https://www.twitch.tv/Willjum", "Jacket", new List<string> { "https://www.twitch.tv/SinksR" }),
-            new StreamInfo("https://www.twitch.tv/NoraExplorer", "Garage Door", new List<string> { "https://www.twitch.tv/CoconutB" }),
-            new StreamInfo("https://www.twitch.tv/Nikof", "Assault Rifle", new List<string> { "https://www.twitch.tv/ElMamene" }),
-            new StreamInfo("https://www.twitch.tv/Mendo", "Rocket Launcher", new List<string> { "https://www.twitch.tv/deathwingua" }),
-            new StreamInfo("https://www.twitch.tv/Krolay", "Sheet Metal Door", new List<string> { "https://www.twitch.tv/JLFranklin_" }),
-            new StreamInfo("https://www.twitch.tv/dilanzito", "Thompson", new List<string> { "https://www.twitch.tv/IsLautaARG00" }),
-            new StreamInfo("https://www.twitch.tv/Dhalucard", "Semi-Automatic Pistol", new List<string> { "https://www.twitch.tv/CaptainMyko" }),
-            new StreamInfo("https://www.twitch.tv/Blooprint", "Vending Machine", new List<string> { "https://www.twitch.tv/hJune" }),
-            new StreamInfo("https://www.twitch.tv/TwitchRivals", "Special Event Item", new List<string>())
-        };
+        private List<StreamInfo> streams = new List<StreamInfo>();
+        private readonly HashSet<string> completedStreams = new HashSet<string>();
 
         public Form1()
         {
@@ -34,23 +27,40 @@ namespace Twitch_Drops
             button2.Click += SetCoordinates;
             skinsListBox.DrawMode = DrawMode.OwnerDrawFixed;
             skinsListBox.DrawItem += skinsListBox_DrawItem;
+
+
+        }
+
+        private async Task FetchAndPopulateStreams()
+        {
+            skinsListBox.Items.Clear();
+            skinsListBox.Items.Add("Fetching Twitch Drops...");
+
+            streams = await TwitchDropsScraper.GetStreamerDropsAsync();
+
+            skinsListBox.Items.Clear();
+
+            if (streams.Count == 0)
+            {
+                skinsListBox.Items.Add("No Twitch Drops Found.");
+                return;
+            }
+
             foreach (var stream in streams)
             {
-                skinsListBox.Items.Add(stream.Description);
-                skinStatuses[stream.Description] = "Not Watched";
+                if (!string.IsNullOrEmpty(stream.Url) && stream.Url != "Unknown" && stream.Description != "Unknown Item")
+                {
+                    skinsListBox.Items.Add(stream.Description + " |  " + stream.WatchTime.Hours + "hrs | " + stream.Url);
+                    skinStatuses[stream.Description] = "Not Watched";
+                }
             }
         }
 
         private async void StartWatching(object sender, EventArgs e)
         {
-
             for (int i = 0; i < streams.Count; i++)
             {
-                TimeSpan watchTime;
-                watchTime = streams[i].Description == "Special Event Item"
-                    ? TimeSpan.FromMinutes(241)
-                    : TimeSpan.FromMinutes(121);
-
+                TimeSpan watchTime = streams[i].WatchTime + TimeSpan.FromMinutes(1);
                 bool watched = await TryWatchStream(streams[i], watchTime, streams, i);
                 if (!watched)
                 {
@@ -82,7 +92,7 @@ namespace Twitch_Drops
             }
             e.DrawFocusRectangle();
         }
-        private readonly HashSet<string> completedStreams = new HashSet<string>();
+
         private async Task<bool> TryWatchStream(StreamInfo streamInfo, TimeSpan watchTime, List<StreamInfo> allStreams, int currentIndex)
         {
             if (completedStreams.Contains(streamInfo.Description))
@@ -137,7 +147,7 @@ namespace Twitch_Drops
 
             LogMessage($"Stream is live: {streamInfo.Description}. Waiting {watchTime.TotalMinutes} minutes.");
             TimeSpan timeWatched = TimeSpan.Zero;
-            const int checkIntervalMinutes = 5;
+            const double checkIntervalMinutes = 5;
 
             while (timeWatched < watchTime)
             {
@@ -258,6 +268,7 @@ namespace Twitch_Drops
                         LogMessage("Focused Google Chrome window.");
                     }
                 }
+                Thread.Sleep(100);
                 SendKeys.SendWait("^w");
                 LogMessage("Sent CTRL + W to close the browser tab.");
             }
@@ -327,23 +338,74 @@ namespace Twitch_Drops
 
         public class StreamInfo
         {
+            public string StreamerName { get; set; }
             public string Url { get; set; }
             public string Description { get; set; }
-            public List<string> BackupUrls { get; set; }
+            public TimeSpan WatchTime { get; set; }
+            public List<string> BackupUrls { get; set; } = new List<string>();
+        }
 
-            public StreamInfo(string url, string description, List<string> backupUrls)
+        public static class TwitchDropsScraper
+        {
+            private const string DropsUrl = "https://twitch.facepunch.com/";
+
+            public static async Task<List<StreamInfo>> GetStreamerDropsAsync()
             {
-                Url = url;
-                Description = description;
-                BackupUrls = backupUrls;
+                var streamInfos = new List<StreamInfo>();
+                var httpClient = new HttpClient();
+                var response = await httpClient.GetStringAsync(DropsUrl);
+
+                var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                htmlDoc.LoadHtml(response);
+
+                var dropBoxes = htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'drop-box')]");
+
+                if (dropBoxes == null) return streamInfos;
+
+                foreach (var drop in dropBoxes)
+                {
+                    try
+                    {
+                        var urlNode = drop.SelectSingleNode(".//a[contains(@href, 'twitch.tv')]");
+                        string streamUrl = urlNode?.Attributes["href"]?.Value ?? "Unknown";
+
+                        var dropTypeNode = drop.SelectSingleNode(".//span[@class='drop-type']");
+                        string dropType = dropTypeNode?.InnerText.Trim() ?? "Unknown Item";
+
+                        var watchTimeNode = drop.SelectSingleNode(".//div[@class='drop-time']/span");
+                        string watchTimeText = watchTimeNode?.InnerText.Trim() ?? "0 Hours";
+
+                        TimeSpan watchTime = TimeSpan.Zero;
+                        if (watchTimeText.Contains("Hour"))
+                        {
+                            string[] parts = watchTimeText.Split(' ');
+                            if (parts.Length > 0 && double.TryParse(parts[0], out double hours))
+                            {
+                                watchTime = TimeSpan.FromHours(hours);
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(streamUrl) && streamUrl.StartsWith("https://www.twitch.tv/") && dropType != "Unknown Item")
+                        {
+                            streamInfos.Add(new StreamInfo
+                            {
+                                Url = streamUrl,
+                                Description = dropType,
+                                WatchTime = watchTime,
+                                BackupUrls = new List<string> { streamUrl }
+                            });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error parsing a drop-box: {ex.Message}");
+                    }
+                }
+
+                return streamInfos;
             }
         }
-        private bool IsColorMatch(Color color1, Color color2, int tolerance = 10)
-        {
-            return Math.Abs(color1.R - color2.R) <= tolerance &&
-                   Math.Abs(color1.G - color2.G) <= tolerance &&
-                   Math.Abs(color1.B - color2.B) <= tolerance;
-        }
+
         private void skinsListBox_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             int index = skinsListBox.IndexFromPoint(e.Location);
@@ -364,8 +426,10 @@ namespace Twitch_Drops
                 }
             }
         }
+
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
+
         private void button2_Click(object sender, EventArgs e)
         {
 
@@ -376,6 +440,21 @@ namespace Twitch_Drops
             button1.Text = "Running";
             button1.Enabled = false;
             button2.Enabled = false;
+        }
+
+        private async void button3_Click(object sender, EventArgs e)
+        {
+            await FetchAndPopulateStreams();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("1. Fetch the twitch drops, double click the ones you want to remove. " +
+                "\n 2. Open google chrome install the 7TV plugin to remove the age prompt" +
+                "\n 3. Open a random stream (google chrome in fullscreen recommended (not stream)) record the red part of the live button" +
+                "\n 4. Close all the twitch streams tabs only have one tab open that not twitch.tv" +
+                "\n 5. Start the bot. Go AFK");
+
         }
     }
 }
