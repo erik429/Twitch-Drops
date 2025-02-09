@@ -1,7 +1,7 @@
 # Twitch Rivals Rust Drops Automation
 
 **Twitch Drops Automation** watch all rust twitch rivals streams for skins while you sleep!
-![Twitch Drops Automation](https://media.discordapp.net/attachments/797746748558147605/1316406372056956928/image.png?ex=675aee78&is=67599cf8&hm=be23d289969544596a361c7104bcff7ade61e2b1b5cd5d31369fdb5d28ce1ac3&=&format=webp&quality=lossless&width=975&height=676)
+![Twitch Drops Automation](https://cdn.discordapp.com/attachments/797746748558147605/1316406372056956928/image.png?ex=677157f8&is=67700678&hm=e3e04876e08d57301f404b5916bedfe2bd7d6b8e65e58432c108e66614186bce&)
 ---
 
 ## 🛠️ Features
