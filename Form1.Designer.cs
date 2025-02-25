@@ -63,22 +63,22 @@
             // 
             pictureBox1.BackgroundImage = (Image)resources.GetObject("pictureBox1.BackgroundImage");
             pictureBox1.BackgroundImageLayout = ImageLayout.Stretch;
-            pictureBox1.Location = new Point(274, 134);
+            pictureBox1.Location = new Point(237, 115);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(92, 56);
+            pictureBox1.Size = new Size(92, 49);
             pictureBox1.TabIndex = 2;
             pictureBox1.TabStop = false;
             // 
             // label1
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.BackColor = SystemColors.ActiveCaptionText;
+            label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
             label1.ForeColor = Color.IndianRed;
-            label1.Location = new Point(372, 99);
+            label1.Location = new Point(583, 125);
             label1.Name = "label1";
             label1.Size = new Size(486, 25);
             label1.TabIndex = 3;
-            label1.Text = "After click on live button dont change size of window\r\n";
+            label1.Text = "After SET CORDS don't change the window size";
             // 
             // skinsListBox
             // 
@@ -94,20 +94,21 @@
             // 
             pictureBox2.BackgroundImage = (Image)resources.GetObject("pictureBox2.BackgroundImage");
             pictureBox2.BackgroundImageLayout = ImageLayout.Stretch;
-            pictureBox2.Location = new Point(2, 6);
+            pictureBox2.Cursor = Cursors.IBeam;
+            pictureBox2.Location = new Point(1, -5);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(1077, 59);
+            pictureBox2.Size = new Size(1086, 77);
             pictureBox2.TabIndex = 5;
             pictureBox2.TabStop = false;
             // 
             // label2
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.BackColor = SystemColors.ActiveCaptionText;
+            label2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
             label2.ForeColor = Color.FromArgb(192, 0, 192);
-            label2.Location = new Point(372, 74);
+            label2.Location = new Point(583, 100);
             label2.Name = "label2";
-            label2.Size = new Size(332, 25);
+            label2.Size = new Size(486, 25);
             label2.TabIndex = 6;
             label2.Text = "USE CHROME BROWSER 7TV Plugin";
             // 
@@ -154,21 +155,21 @@
             // 
             // label7
             // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label7.BackColor = SystemColors.ActiveCaptionText;
+            label7.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
             label7.ForeColor = Color.MediumTurquoise;
-            label7.Location = new Point(372, 124);
+            label7.Location = new Point(583, 75);
             label7.Name = "label7";
-            label7.Size = new Size(303, 25);
+            label7.Size = new Size(486, 25);
             label7.TabIndex = 12;
-            label7.Text = "Don't touch computer after start";
+            label7.Text = "AFK after start";
             // 
             // button1
             // 
             button1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button1.Location = new Point(12, 75);
+            button1.Location = new Point(12, 170);
             button1.Name = "button1";
-            button1.Size = new Size(256, 37);
+            button1.Size = new Size(219, 37);
             button1.TabIndex = 13;
             button1.Text = "3. START";
             button1.UseVisualStyleBackColor = true;
@@ -177,18 +178,18 @@
             // button2
             // 
             button2.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button2.Location = new Point(12, 134);
+            button2.Location = new Point(12, 115);
             button2.Name = "button2";
-            button2.Size = new Size(256, 55);
+            button2.Size = new Size(219, 49);
             button2.TabIndex = 14;
-            button2.Text = "2. SET CORDS TO LIVE BUTTON (click to set)\r\n";
+            button2.Text = "2. SET CORDS \r\nLIVE BUTTON (click to set)\r\n";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
             // button3
             // 
             button3.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button3.Location = new Point(850, 75);
+            button3.Location = new Point(12, 76);
             button3.Name = "button3";
             button3.Size = new Size(219, 29);
             button3.TabIndex = 15;
@@ -198,7 +199,7 @@
             // 
             // button4
             // 
-            button4.Location = new Point(994, 110);
+            button4.Location = new Point(254, 170);
             button4.Name = "button4";
             button4.Size = new Size(75, 23);
             button4.TabIndex = 16;
